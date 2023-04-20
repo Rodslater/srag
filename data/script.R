@@ -106,7 +106,8 @@ shp_srag <- shp_srag  |>
 municipios <- readRDS('data/codigos_municipios.rds')
 municipios$codigo <-  as.character(municipios$codigo)
 shp_srag <- left_join(shp_srag, municipios, by = c("City" = "codigo"))
-
+shp_srag <- shp_srag |> 
+  mutate_all(replace_na, 0) 
 
 saveRDS(SRAG, 'data/SRAG.rds')
 saveRDS(shp_srag, 'data/shp_srag.rds')
