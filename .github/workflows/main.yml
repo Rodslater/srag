@@ -21,7 +21,8 @@ jobs:
           packages: |
             any::tidyverse
             any::rvest
-            any::rio        
+            any::rio
+            any::sf
             
       - name: Execute Script
         run: |
