@@ -31,7 +31,7 @@ SRAG <- SRAG |>
   select(data, semana=SEM_NOT,codigo=CO_MUN_NOT, sexo=CS_SEXO, raca=CS_RACA, idade=NU_IDADE_N, idoso,
          vacina_covid=VACINA_COV, classificacao=CLASSI_FIN, evolucao=EVOLUCAO, data_evolucao)
 
-municipios <- readRDS('codigos_municipios.rds')
+municipios <- readRDS('data/codigos_municipios.rds')
 SRAG <- left_join(SRAG, municipios, by='codigo')
 
 SRAG <- SRAG |> select(-codigo) |> 
