@@ -52,7 +52,7 @@ SRAG <- SRAG |>
 municipios <- readRDS('data/codigos_municipios.rds')
 SRAG <- left_join(SRAG, municipios, by='codigo')
 
-SRAG <- SRAG |> select(-codigo) |> 
+SRAG <- SRAG |>
   mutate(sexo = case_when(sexo  == 'M' ~ 'Homem',
                           sexo  == 'F' ~ 'Mulher',
                           TRUE ~ sexo),
