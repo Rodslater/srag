@@ -1,6 +1,7 @@
 library(rio)
 library(rvest)
 library(tidyverse)
+library(sf)
 
 site21 <- read_html("https://opendatasus.saude.gov.br/dataset/srag-2021-a-2023/resource/dd91a114-47a6-4f21-bcd5-86737d4fc734")
 link21 <- site21 %>% html_nodes(xpath="//a[contains(text(), '.csv')]") %>% html_attr("href")
@@ -78,6 +79,34 @@ SRAG <- SRAG |>
                               evolucao  == 3 ~ 'Óbito por outras causas',
                               evolucao  == 9 ~ 'Ignorado',
                               TRUE ~ as.character(evolucao)))
+    
+    
+    
+shp <- st_read("data/mapa/shp.shp")
+shp <- shp %>% 
+  select(City, geometry)
+shp$City <- as.character(shp$City)
+shp$City <- substr(shp$City, 1, nchar(shp$City)-1)
+shp <- st_as_sf(shp)%>%
+  st_transform(4326)
+
+srag_municipios <- SRAG |> 
+  group_by(municipio) |> 
+  mutate(casos= n(),
+         codigo=as.character(codigo)) %>% 
+  distinct(casos, .keep_all=TRUE) |> 
+  select(municipio, codigo, casos)
+
+
+shp_srag <- left_join(shp, srag_municipios, by = c("City" = "codigo"))
+shp_srag <- shp_srag  |> 
+  select(-municipio) 
+
+
+municipios <- readRDS('data/codigos_municipios.rds')
+municipios$codigo <-  as.character(municipios$codigo)
+shp_srag <- left_join(shp_srag, municipios, by = c("City" = "codigo"))
 
 
 saveRDS(SRAG, 'data/SRAG.rds')
+saveRDS(shp_srag, 'data/shp_srag.rds')
