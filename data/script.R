@@ -22,4 +22,44 @@ SRAG <- import_list(dir(pattern = ".csv"), rbind = TRUE, encoding = "UTF-8")
 arquivos_csv <- dir(pattern = ".csv")
 file.remove(arquivos_csv)
 
+
+SRAG <- SRAG |> 
+  filter(SG_UF_NOT == "SE") |>  
+  mutate(data = dmy(DT_NOTIFIC),
+         data_evolucao = dmy(DT_EVOLUCA),
+         idoso = ifelse(NU_IDADE_N >= 60, 'Sim','Não')) |> 
+  select(data, semana=SEM_NOT,codigo=CO_MUN_NOT, sexo=CS_SEXO, raca=CS_RACA, idade=NU_IDADE_N, idoso,
+         vacina_covid=VACINA_COV, classificacao=CLASSI_FIN, evolucao=EVOLUCAO, data_evolucao)
+
+municipios <- readRDS('codigos_municipios.rds')
+SRAG <- left_join(SRAG, municipios, by='codigo')
+
+SRAG <- SRAG |> select(-codigo) |> 
+  mutate(sexo = case_when(sexo  == 'M' ~ 'Homem',
+                          sexo  == 'F' ~ 'Mulher',
+                          TRUE ~ sexo),
+         raca = case_when(raca  == 1 ~ 'Branca',
+                          raca  == 2 ~ 'Preta',
+                          raca  == 3 ~ 'Amarela',
+                          raca  == 4 ~ 'Parda',
+                          raca  == 5 ~ 'Indígena',
+                          raca  == 9 ~ 'Ignorado',
+                          TRUE ~ as.character(raca)),
+         vacina_covid = case_when(vacina_covid  == 1 ~ 'Sim',
+                                  vacina_covid  == 2 ~ 'Não',
+                                  vacina_covid  == 9 ~ 'Ignorado',
+                                  TRUE ~ as.character(vacina_covid )),
+         classificacao = case_when(classificacao  == 1 ~ 'SRAG por influenza',
+                                   classificacao  == 2 ~ 'SRAG por outro vírus respiratório',
+                                   classificacao  == 3 ~ 'SRAG por outro agente etiológico,',
+                                   classificacao  == 4 ~ 'SRAG não especificado',
+                                   classificacao  == 5 ~ 'SRAG por covid-19',
+                                   TRUE ~ as.character(classificacao)),
+         evolucao = case_when(evolucao  == 1 ~ 'Cura',
+                              evolucao  == 2 ~ 'Óbito',
+                              evolucao  == 3 ~ 'Óbito por outras causas',
+                              evolucao  == 9 ~ 'Ignorado',
+                              TRUE ~ as.character(evolucao)))
+
+
 saveRDS(SRAG, 'data/SRAG.rds')
