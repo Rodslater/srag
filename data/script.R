@@ -29,7 +29,8 @@ SRAG <- SRAG |>
          data_evolucao = dmy(DT_EVOLUCA),
          idoso = ifelse(NU_IDADE_N >= 60, 'Sim','Não')) |> 
   select(data, semana=SEM_NOT,codigo=CO_MUN_NOT, sexo=CS_SEXO, raca=CS_RACA, idade=NU_IDADE_N, idoso,
-         vacina_covid=VACINA_COV, classificacao=CLASSI_FIN, evolucao=EVOLUCAO, data_evolucao)
+         vacina_covid=VACINA_COV, classificacao=CLASSI_FIN, evolucao=EVOLUCAO, data_evolucao) |> 
+    arrange(data)
 
 municipios <- readRDS('data/codigos_municipios.rds')
 SRAG <- left_join(SRAG, municipios, by='codigo')
