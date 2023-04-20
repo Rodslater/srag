@@ -45,7 +45,7 @@ SRAG <- SRAG |>
                                       idade > 69 & idade < 75 ~ "70 a 74 anos",
                                       idade > 74 & idade < 80 ~ "75 a 79 anos",
                                       idade > 79 ~ "80 anos ou mais")) |> 
-  select(data, semana=SEM_NOT,codigo=CO_MUN_NOT, sexo=CS_SEXO, raca=CS_RACA, idade=NU_IDADE_N, idoso,
+  select(data, semana=SEM_NOT,codigo=CO_MUN_NOT, sexo=CS_SEXO, raca=CS_RACA, idade=NU_IDADE_N, grupo_idade, idoso,
          vacina_covid=VACINA_COV, classificacao=CLASSI_FIN, evolucao=EVOLUCAO, data_evolucao) |> 
     arrange(data)
 
