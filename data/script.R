@@ -3,6 +3,8 @@ library(rvest)
 library(tidyverse)
 library(sf)
 
+memory.limit(24576)
+
 site21 <- read_html("https://opendatasus.saude.gov.br/dataset/srag-2021-a-2023/resource/dd91a114-47a6-4f21-bcd5-86737d4fc734")
 link21 <- site21 %>% html_nodes(xpath="//a[contains(text(), '.csv')]") %>% html_attr("href")
 destino21 <- "SRAG21.csv"
